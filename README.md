@@ -9,20 +9,33 @@
 - `logic.js`: 診断の進行、計算ロジック、画面表示を制御するプログラムです。
 - `assets/images/`: 診断結果に表示されるイラスト画像が格納されています。
 
-## Web への公開方法（デプロイ）
+## Web への公開方法（GitHub & Vercel）
 
-このアプリは静的な HTML/JS 構成のため、以下の手順で簡単に Web 上に公開できます。
+このフォルダは既に Git リポジトリとして初期化されています。以下の手順で公開してください。
 
-### おすすめ：Netlify Drop を使う方法
+### 1. GitHub へのアップロード
 
-1. ブラウザで [Netlify Drop](https://app.netlify.com/drop) にアクセスします。
-2. このフォルダ（`Household liquidation`）ごと、ブラウザの枠内にドラッグ＆ドロップします。
-3. 数秒でアップロードが完了し、公開 URL が発行されます。
+コマンドライン（ターミナル/PowerShell）で以下を実行してください。
+※GitHub CLI (`gh`) がインストールされている前提です。
 
-### その他の方法
+```bash
+# GitHubリポジトリの作成（公開設定: Public）
+gh repo create household-liquidation-diagnosis --public --source=. --remote=origin
 
-- **GitHub Pages**: GitHub リポジトリにプッシュし、Settings > Pages から公開設定を行います。
-- **Vercel**: `npm i -g vercel` で CLI をインストールし、`vercel`コマンドを実行します。
+# GitHubへプッシュ
+git push -u origin master
+```
+
+### 2. Vercel へのデプロイ
+
+Vercel CLI (`vercel`) がインストールされている場合：
+
+```bash
+# Vercelへデプロイ（初回はログインや設定が問われます。すべてEnterでOKです）
+vercel
+```
+
+Vercel CLI がない場合は、[Vercel のダッシュボード](https://vercel.com/new)から、アップロードした GitHub リポジトリ (`household-liquidation-diagnosis`) をインポートしてください。設定なしで自動的にデプロイされます。
 
 ## カスタマイズ
 
