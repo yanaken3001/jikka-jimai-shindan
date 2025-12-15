@@ -45,7 +45,7 @@ function calculateScores() {
     return newScores;
 }
 
-// Determine Result Type based on Waterfall Logic
+// Determine Result Type based on "Waterfall" Logic (Prioritized)
 function determineResultType() {
     const { U, L, B, V } = state.scores;
     const answers = state.answers;
@@ -59,32 +59,30 @@ function determineResultType() {
 
     console.log("Checking Logic with:", { U, L, B, V });
 
-    // 1. Type E: (U >= 19) OR (U >= 13 AND (B >= 13 OR L >= 13))
-    if (U >= 19 || (U >= 13 && (B >= 13 || L >= 13))) {
+    // 1. Type E (Emergency): High Urgency
+    if (U >= 12) {
         return 'E';
     }
 
-    // 2. Type C: (L >= 19) OR (L >= 13 AND (Q5 is B/C OR Q7 is C/D))
-    const q5 = getAnsVal(5);
-    const q7 = getAnsVal(7);
-    if (L >= 19 || (L >= 13 && (['B', 'C'].includes(q5) || ['C', 'D'].includes(q7)))) {
+    // 2. Type C (Legal/Rights): Legal issues prioritized
+    const q5 = getAnsVal(5); // Name
+    const q7 = getAnsVal(7); // Family Consensus
+    if (L >= 10 && (['B', 'C'].includes(q5) || ['C', 'D'].includes(q7))) {
         return 'C';
     }
 
-    // 3. Type B: (B >= 19) OR (B >= 13 AND (Q9 is C/D OR Q10 is C/D))
-    const q9 = getAnsVal(9);
-    const q10 = getAnsVal(10);
-    if (B >= 19 || (B >= 13 && (['C', 'D'].includes(q9) || ['C', 'D'].includes(q10)))) {
+    // 3. Type B (Burden): High Burden or Serious Deterioration
+    const q10 = getAnsVal(10); // Building State
+    if (B >= 12 || q10 === 'D') {
         return 'B';
     }
 
-    // 4. Type D: (V >= 19) OR (V >= 13 AND (Q15 is A/B AND B <= 12))
-    const q15 = getAnsVal(15);
-    if (V >= 19 || (V >= 13 && (['A', 'B'].includes(q15) && B <= 12))) {
+    // 4. Type D (Value/Asset): Wants to keep/utilize, but burden is manageable
+    if (V >= 10 && B <= 15) {
         return 'D';
     }
 
-    // 5. Type A: Everything else
+    // 5. Type A (Action/Sale): Default for those ready to move
     return 'A';
 }
 
@@ -100,8 +98,8 @@ const ui = {
     startBtn: document.getElementById('start-btn'),
     // Question UI
     qNum: document.getElementById('current-q-num'),
-    progressText: document.getElementById('current-progress-text'),
-    progressBar: document.getElementById('progress-bar'),
+    // progressText: document.getElementById('current-progress-text'), // Removed in new design
+    // progressBar: document.getElementById('progress-bar'),         // Removed in new design
     qText: document.getElementById('question-text'),
     optionsContainer: document.getElementById('options-container'),
     backBtn: document.getElementById('back-btn'),
@@ -109,10 +107,11 @@ const ui = {
     resLabel: document.getElementById('result-label'),
     resH1: document.getElementById('result-h1'),
     resSubCopy: document.getElementById('result-subcopy'),
-    resIssues: document.getElementById('result-issues'),
-    resAdvice: document.getElementById('result-advice'),
+    resWhyNow: document.getElementById('result-why-now'),
+    resRisk: document.getElementById('result-risk'),
+    resActionList: document.getElementById('result-action-list'),
     resSupplement: document.getElementById('result-supplement'),
-    ctaBtn: document.querySelector('#cta-btn span') // Target the text span inside the button
+    ctaBtn: document.getElementById('cta-btn')
 };
 
 // --- UI Transitions ---
@@ -131,10 +130,8 @@ function renderQuestion() {
     const totalQ = diagnosisData.questions.length;
 
     // Update Progress
-    const progress = Math.round((qIndex / totalQ) * 100);
     ui.qNum.textContent = qIndex + 1;
-    ui.progressText.textContent = progress;
-    ui.progressBar.style.width = `${progress}%`;
+    // Progress bar removed in new design, only Step number remains
 
     // Update Text
     ui.qText.textContent = question.text;
@@ -143,12 +140,18 @@ function renderQuestion() {
     ui.optionsContainer.innerHTML = '';
     question.options.forEach((option, idx) => {
         const btn = document.createElement('button');
-        btn.className = "w-full text-left p-4 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition font-medium text-gray-700 active:bg-blue-100 flex items-center";
+        // New Design Class
+        btn.className = "w-full text-left p-6 border-2 border-slate-200 hover:border-navy-900 bg-white hover:bg-slate-50 transition-all font-bold text-navy-900 sharp-shadow-active text-lg group flex items-start";
         
-        // Adding A/B/C/D labels for better UX (optional, but good for "Q1. A, B...")
-        // const label = String.fromCharCode(65 + idx); // 65 is 'A'
-        // btn.innerHTML = `<span class="bg-gray-100 text-gray-600 font-bold py-1 px-3 rounded mr-3 text-sm">${label}</span>${option.text}`;
-        btn.textContent = option.text;
+        // Add checkmark circle visual
+        const circle = document.createElement('span');
+        circle.className = "w-6 h-6 rounded-full border-2 border-slate-300 mr-4 mt-1 flex-shrink-0 group-hover:border-navy-900 group-hover:bg-signal-400 transition-colors";
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = option.text;
+
+        btn.appendChild(circle);
+        btn.appendChild(textSpan);
 
         btn.onclick = () => handleAnswer(question.id, option);
         ui.optionsContainer.appendChild(btn);
@@ -204,20 +207,25 @@ function renderResult(typeId) {
     ui.resLabel.textContent = data.label;
     ui.resH1.textContent = data.h1;
     ui.resSubCopy.textContent = data.subCopy;
-    ui.resIssues.textContent = data.issues;
-    ui.resAdvice.textContent = data.advice;
     
-    // Set Image
-    if (data.image) {
-        const imgEl = document.getElementById('result-image');
-        if (imgEl) {
-            imgEl.src = data.image;
-        }
+    // New Cards
+    ui.resWhyNow.textContent = data.whyNow;
+    ui.resRisk.textContent = data.risk;
+
+    // Action List
+    ui.resActionList.innerHTML = ''; // Clear previous
+    if (data.action && Array.isArray(data.action)) {
+        data.action.forEach(item => {
+            const li = document.createElement('li');
+            li.className = "flex items-start";
+            li.innerHTML = `<span class="text-signal-400 mr-2">▶</span> ${item}`;
+            ui.resActionList.appendChild(li);
+        });
     }
-    
-    // Supplement Text (with line breaks)
+
+    // Supplement Text
     if (ui.resSupplement) {
-        ui.resSupplement.innerHTML = data.supplement.replace(/\n/g, '<br>');
+        ui.resSupplement.innerHTML = data.supplement; // No regex replace needed as data uses template literals mostly, or plain text
     }
     
     // CTA Button Text update
@@ -242,4 +250,4 @@ ui.backBtn.addEventListener('click', () => {
 });
 
 // Initialize
-console.log("Diagnosis Logic Loaded");
+console.log("Diagnosis Logic Loaded (Rebranded)");
