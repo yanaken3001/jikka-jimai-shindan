@@ -45,6 +45,18 @@ function calculateScores() {
     return newScores;
 }
 
+// Calculate Neglect Risk Score (0-100)
+// Max possible score based on data is approx 55 (U=12, L=15, B=18, V=10 approx max sum path)
+// We will simply sum all scores and map to 0-100 based on a max of 55.
+function calculateRiskScore() {
+    const { U, L, B, V } = state.scores;
+    const total = U + L + B + V;
+    const maxScore = 55;
+    let score = Math.round((total / maxScore) * 100);
+    if (score > 100) score = 100;
+    return score;
+}
+
 // Determine Result Type based on "Waterfall" Logic (Prioritized)
 function determineResultType() {
     const { U, L, B, V } = state.scores;
@@ -111,7 +123,9 @@ const ui = {
     resRisk: document.getElementById('result-risk'),
     resActionList: document.getElementById('result-action-list'),
     resSupplement: document.getElementById('result-supplement'),
-    ctaBtn: document.getElementById('cta-btn')
+    ctaBtn: document.getElementById('cta-btn'),
+    // Risk Score UI - Will be dynamically added or updated
+    loadingText: document.getElementById('loading-text')
 };
 
 // --- UI Transitions ---
@@ -188,15 +202,35 @@ function handleAnswer(qId, selectedOption) {
 function finishDiagnosis() {
     switchScreen('loading');
     
-    // Simulate calculation time for UX (1.5 seconds)
+    // Step 1: 0ms
+    if(ui.loadingText) ui.loadingText.textContent = "回答データを解析中...";
+    
+    // Step 2: 500ms (Duration of Step 1)
     setTimeout(() => {
-        calculateScores();
-        const resultType = determineResultType();
-        renderResult(resultType);
+        if(ui.loadingText) ui.loadingText.textContent = "法的リスク要因を照合中...";
+    }, 500);
+
+    // Step 3: 1500ms (Duration of Step 2 was 1.0s)
+    setTimeout(() => {
+        if(ui.loadingText) ui.loadingText.textContent = "近隣相場データと突合中...";
     }, 1500);
+
+    // Step 4: 2500ms (Duration of Step 3 was 1.0s) -> Finish
+    setTimeout(() => {
+        if(ui.loadingText) ui.loadingText.textContent = "診断レポート作成完了";
+        
+        // Slight pause to let the user see "Complete"
+        setTimeout(() => {
+             calculateScores();
+             const resultType = determineResultType();
+             const riskScore = calculateRiskScore();
+             renderResult(resultType, riskScore);
+        }, 800);
+        
+    }, 2500);
 }
 
-function renderResult(typeId) {
+function renderResult(typeId, riskScore) {
     const data = diagnosisData.results[typeId];
     if (!data) {
         console.error("Unknown result type:", typeId);
@@ -206,6 +240,33 @@ function renderResult(typeId) {
     // Populate Data
     ui.resLabel.textContent = data.label;
     ui.resH1.textContent = data.h1;
+    
+    // Inject Risk Score
+    const riskGaugeHtml = `
+      <div class="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-sm">
+        <p class="text-sm text-slate-500 font-bold mb-2 tracking-widest text-center">あなたの実家放置リスク</p>
+        <div class="flex items-center justify-center gap-4">
+            <div class="w-full bg-slate-200 h-4 rounded-full overflow-hidden max-w-md">
+                <div class="bg-red-600 h-full transition-all duration-1000 ease-out" style="width: ${riskScore}%"></div>
+            </div>
+            <span class="text-4xl font-mono font-black text-red-600">${riskScore}%</span>
+        </div>
+      </div>
+    `;
+    
+    // Prepend or insert Risk Gauge securely
+    // We'll insert it after resH1 for now or manipulate DOM structure
+    // Let's modify index.html to have a container, OR insert it here.
+    // For safety, let's insert it into a container we'll create in index.html, 
+    // OR just prepend to subcopy if container doesn't exist.
+    // Actually, asking to modify index.html is better, but here we can just insertAdjacentHTML
+    
+    // Let's assume we will add a container in index.html with id 'result-risk-gauge-container'
+    const riskContainer = document.getElementById('result-risk-gauge-container');
+    if (riskContainer) {
+        riskContainer.innerHTML = riskGaugeHtml;
+    }
+
     ui.resSubCopy.textContent = data.subCopy;
     
     // New Cards

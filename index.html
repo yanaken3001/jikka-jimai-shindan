@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>実家じまい診断 | 意思決定支援ツール</title>
+    <title>実家じまい診断 | 資産価値・リスク判定レポート</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
     <script>
@@ -14,205 +14,375 @@
         theme: {
           extend: {
             fontFamily: {
-              sans: ['"Noto Sans JP"', 'sans-serif'],
+              sans: ['"Noto Sans JP"', "sans-serif"],
+              mono: ['"Roboto Mono"', "monospace"],
             },
             colors: {
               navy: {
-                900: '#0f172a', // Deep Navy
-                800: '#1e293b',
+                900: "#0f172a", // Deep Navy
+                800: "#1e293b",
               },
               signal: {
-                400: '#facc15', // Signal Yellow (text-yellow-400)
-                500: '#eab308',
+                400: "#facc15", // Signal Yellow
+                500: "#eab308",
               },
-            }
-          }
-        }
-      }
+              paper: "#f8fafc", // Very light blue-gray for paper feel
+            },
+          },
+        },
+      };
     </script>
     <style>
       body {
         font-family: "Noto Sans JP", sans-serif;
-        background-color: #ffffff; /* Pure White */
-        color: #0f172a; /* Deep Navy Text */
+        background-color: #f1f5f9; /* Slate 100 Background */
+        color: #0f172a;
+      }
+      .font-mono {
+        font-family: "Roboto Mono", monospace;
       }
       .fade-in {
         animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       }
       @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* Report Style Shadows */
+      .report-shadow {
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
       }
       .sharp-shadow {
         box-shadow: 4px 4px 0px 0px rgba(15, 23, 42, 0.1);
       }
       .sharp-shadow-hover:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 6px 6px 0px 0px rgba(15, 23, 42, 0.2);
+        transform: translate(-1px, -1px);
+        box-shadow: 5px 5px 0px 0px rgba(15, 23, 42, 0.15);
       }
       .sharp-shadow-active:active {
         transform: translate(0px, 0px);
-        box-shadow: 2px 2px 0px 0px rgba(15, 23, 42, 0.2);
+        box-shadow: 2px 2px 0px 0px rgba(15, 23, 42, 0.15);
       }
     </style>
   </head>
-  <body class="flex flex-col min-h-screen">
-
-    <!-- Header: Professional & Minimal -->
-    <header class="w-full bg-navy-900 py-3 md:py-4 px-4 md:px-6 fixed top-0 z-50 border-b border-navy-800">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="text-white font-bold tracking-wider text-lg flex items-center">
-                <span class="w-3 h-3 bg-signal-400 mr-3"></span>
-                実家じまい診断
-
-            </h1>
-
+  <body class="flex flex-col min-h-screen bg-slate-100">
+    <!-- Header: Professional & Dense -->
+    <header
+      class="w-full bg-navy-900 py-3 px-4 md:px-6 fixed top-0 z-50 border-b border-slate-700 shadow-md"
+    >
+      <div class="max-w-5xl mx-auto flex justify-between items-center">
+        <h1
+          class="text-white font-bold tracking-wider text-sm md:text-base flex items-center"
+        >
+          <span class="w-2 h-2 bg-signal-400 mr-3"></span>
+          JIKKA ASSET REPORT
+        </h1>
+        <div
+          class="text-xs text-slate-400 font-mono tracking-widest hidden md:block"
+        >
+          ID: 2024-JIKKA-DX
         </div>
+      </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow pt-20 md:pt-28 pb-10 md:pb-20 px-4 md:px-8">
-        <div class="max-w-4xl mx-auto w-full">
+    <main class="flex-grow pt-24 pb-12 px-4 md:px-6">
+      <div class="max-w-3xl mx-auto w-full">
+        <!-- Hero Section -->
+        <section
+          id="hero-section"
+          class="flex flex-col items-center pt-8 md:pt-16 text-center fade-in"
+        >
+          <div
+            class="bg-white p-8 md:p-12 w-full border border-slate-200 shadow-sm rounded-sm mb-8"
+          >
+            <p
+              class="text-slate-500 font-bold tracking-widest mb-4 text-xs md:text-sm uppercase"
+            >
+              Diagnostic Tool for Inherited Assets
+            </p>
+            <h2
+              class="text-3xl md:text-5xl font-black leading-tight tracking-tight mb-8 text-navy-900"
+            >
+              実家じまい診断<br />
+              <span
+                class="text-xl md:text-3xl font-bold mt-2 block text-slate-600"
+                >放置リスク判定レポート</span
+              >
+            </h2>
 
-            <!-- Hero Section -->
-            <section id="hero-section" class="flex flex-col items-center justify-center min-h-[60vh] md:min-h-[70vh] text-center fade-in">
-                
-                <div class="mb-8 md:mb-12">
-                   <p class="text-navy-900 font-bold tracking-widest mb-4 md:mb-6 opacity-70 text-sm md:text-base">実家の将来に悩む方のための、最短ルート判定</p>
-                   <h2 class="text-4xl md:text-7xl font-black leading-relaxed md:leading-loose tracking-tight mb-6 md:mb-8">
-                       実家じまいに<br/>
-                       <span class="bg-navy-900 text-white px-2 py-1">終止符を</span>
-                   </h2>
-                   <p class="text-lg md:text-2xl font-bold leading-relaxed mb-6 md:mb-10 text-slate-700">
-                       漠然とした不安を、3分で<br/>
-                       「具体的な行動計画」へ。
-                   </p>
+            <div class="h-px w-20 bg-slate-300 mx-auto mb-8"></div>
+
+            <p
+              class="text-base md:text-lg font-medium leading-relaxed mb-10 text-slate-700"
+            >
+              あなたの実家が抱える<br class="md:hidden" />
+              「見えない負債」と「法的リスク」を<br />
+              数値化して可視化します。
+            </p>
+
+            <button
+              id="start-btn"
+              class="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-black text-white transition-all duration-200 bg-navy-900 border border-navy-900 hover:bg-navy-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy-900 w-full md:w-auto sharp-shadow sharp-shadow-hover"
+            >
+              <span>診断を開始する</span>
+              <span class="ml-2 font-mono text-signal-400 text-sm"
+                >00:03:00</span
+              >
+            </button>
+
+            <p class="mt-6 text-xs text-slate-400">
+              ※ 入力データは診断結果の表示のみに使用されます
+            </p>
+          </div>
+
+          <div
+            class="grid grid-cols-3 gap-2 w-full text-xs font-bold text-slate-500 max-w-lg mx-auto"
+          >
+            <div
+              class="bg-white py-2 border border-slate-200 text-center rounded-sm"
+            >
+              登録不要
+            </div>
+            <div
+              class="bg-white py-2 border border-slate-200 text-center rounded-sm"
+            >
+              即時発行
+            </div>
+            <div
+              class="bg-white py-2 border border-slate-200 text-center rounded-sm"
+            >
+              完全無料
+            </div>
+          </div>
+        </section>
+
+        <!-- Question Section -->
+        <section id="question-section" class="hidden pt-4 fade-in">
+          <!-- Status Bar -->
+          <div
+            class="bg-white border border-slate-200 p-4 mb-6 flex justify-between items-center rounded-sm shadow-sm sticky top-20 z-40"
+          >
+            <span class="text-xs font-bold text-slate-400 tracking-widest"
+              >QUESTION No.</span
+            >
+            <span class="text-2xl font-mono font-black text-navy-900"
+              ><span id="current-q-num">01</span
+              ><span class="text-sm text-slate-400 font-normal ml-1"
+                >/ 20</span
+              ></span
+            >
+          </div>
+
+          <!-- Main Card -->
+          <div
+            class="bg-white border border-slate-200 p-6 md:p-10 shadow-sm rounded-sm"
+          >
+            <h3
+              id="question-text"
+              class="text-xl md:text-2xl font-bold mb-8 text-navy-900 leading-snug min-h-[4em] md:min-h-[3em] flex items-center border-b border-slate-100 pb-8"
+            >
+              質問テキスト
+            </h3>
+
+            <!-- Options -->
+            <div id="options-container" class="grid gap-3">
+              <!-- Options injected here -->
+            </div>
+          </div>
+
+          <div class="mt-8 text-center">
+            <button
+              id="back-btn"
+              class="text-slate-400 hover:text-navy-900 text-xs font-bold border-b border-slate-300 pb-1 hidden"
+            >
+              BACK
+            </button>
+          </div>
+        </section>
+
+        <!-- Loading Section -->
+        <section
+          id="loading-section"
+          class="hidden min-h-[50vh] flex flex-col items-center justify-center fade-in text-center"
+        >
+          <div
+            class="bg-white p-10 border border-slate-200 shadow-sm rounded-sm w-full max-w-sm"
+          >
+            <div
+              class="w-12 h-12 border-4 border-slate-100 border-t-navy-900 rounded-full animate-spin mx-auto mb-6"
+            ></div>
+            <h3 class="text-xl font-black text-navy-900 mb-2 tracking-widest">
+              ANALYZING
+            </h3>
+            <div class="h-px w-full bg-slate-100 my-4"></div>
+            <p id="loading-text" class="text-slate-600 font-mono text-sm">
+              データ解析中...
+            </p>
+          </div>
+        </section>
+
+        <!-- Result Section -->
+        <section id="result-section" class="hidden fade-in">
+          <!-- Report Header -->
+          <div
+            class="bg-white border border-slate-200 p-8 md:p-12 shadow-sm rounded-sm relative overflow-hidden mb-6"
+          >
+            <div class="absolute top-0 left-0 w-full h-2 bg-navy-900"></div>
+
+            <div
+              class="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8 border-b border-slate-100 pb-8"
+            >
+              <div>
+                <span
+                  class="inline-block bg-slate-100 text-slate-600 px-2 py-1 text-xs font-bold mb-3 border border-slate-200"
+                  >DIAGNOSIS RESULT</span
+                >
+                <div
+                  class="text-sm text-slate-500 font-bold mb-1"
+                  id="result-label"
+                >
+                  タイプ名
                 </div>
+                <h2
+                  id="result-h1"
+                  class="text-2xl md:text-3xl font-black text-navy-900 leading-tight"
+                >
+                  見出し
+                </h2>
+              </div>
+            </div>
 
-                <button id="start-btn" class="group relative inline-flex items-center justify-center px-6 py-4 md:px-10 md:py-6 text-lg md:text-xl font-black text-navy-900 transition-all duration-200 bg-signal-400 border-2 border-navy-900 sharp-shadow sharp-shadow-hover w-full md:w-auto">
-                    <span>今すぐ、やるべきことを明確にする <span class="text-sm ml-1 opacity-80">(3分)</span></span>
-                    <svg class="w-6 h-6 ml-3 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </button>
-                
-                <div class="mt-8 flex gap-6 text-sm font-bold text-slate-500">
-                    <span>✓ 登録不要</span>
-                    <span>✓ その場でわかる</span>
-                    <span>✓ 完全無料</span>
-                </div>
-            </section>
+            <!-- Risk Gauge Injection Container -->
+            <div id="result-risk-gauge-container"></div>
 
-            <!-- Question Section -->
-            <section id="question-section" class="hidden min-h-[60vh] flex flex-col pt-10 fade-in max-w-3xl mx-auto">
-                <!-- Status Bar -->
-                <div class="mb-10">
-                    <div class="flex justify-between items-end border-b-2 border-navy-900 pb-2 mb-2">
-                        <span class="text-3xl font-black text-navy-900 italic">STEP <span id="current-q-num">1</span><span class="text-lg text-slate-400 font-normal">/20</span></span>
-                        <span class="text-sm font-bold text-slate-500 tracking-widest">STATUS CHECK</span>
-                    </div>
-                </div>
+            <div class="bg-blue-50 border-l-4 border-navy-900 p-6">
+              <p
+                id="result-subcopy"
+                class="text-base md:text-lg font-bold text-navy-900 leading-relaxed"
+              >
+                サブコピー
+              </p>
+            </div>
+          </div>
 
-                <!-- Question Text -->
-                <h3 id="question-text" class="text-2xl md:text-4xl font-black mb-12 text-navy-900 leading-snug">
-                    質問テキスト
-                </h3>
-                
-                <!-- Options -->
-                <div id="options-container" class="grid gap-4">
-                    <!-- Options injected here -->
-                </div>
-                
-                <div class="mt-12 text-center">
-                    <button id="back-btn" class="text-slate-400 hover:text-navy-900 font-bold border-b border-transparent hover:border-navy-900 transition-colors hidden text-sm">
-                        ← 前の項目に戻る
-                    </button>
-                </div>
-            </section>
+          <!-- 3 Columns (Stacked on Mobile) -->
+          <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <!-- Card 1: Why Now -->
+            <div
+              class="bg-white border border-slate-200 p-6 rounded-sm shadow-sm"
+            >
+              <h4
+                class="font-mono font-bold text-slate-400 text-xs mb-3 border-b border-slate-100 pb-2"
+              >
+                01 REASON
+              </h4>
+              <h5 class="font-bold text-navy-900 mb-4 text-lg">
+                なぜ「今」なのか
+              </h5>
+              <p
+                id="result-why-now"
+                class="text-sm text-slate-700 leading-7 text-justify"
+              >
+                なぜ今やるべきか
+              </p>
+            </div>
 
-            <!-- Loading Section -->
-            <section id="loading-section" class="hidden min-h-[60vh] flex flex-col items-center justify-center fade-in">
-                <div class="w-16 h-16 border-4 border-navy-900 border-t-signal-400 rounded-full animate-spin mb-8"></div>
-                <h3 class="text-3xl font-black text-navy-900 mb-2">CALCULATING...</h3>
-                <p class="text-slate-500 font-bold">最適解を算出中</p>
-            </section>
+            <!-- Card 2: Risk -->
+            <div
+              class="bg-white border border-slate-200 p-6 rounded-sm shadow-sm md:border-t-4 md:border-t-red-600"
+            >
+              <h4
+                class="font-mono font-bold text-red-400 text-xs mb-3 border-b border-slate-100 pb-2"
+              >
+                02 RISK FACTOR
+              </h4>
+              <h5 class="font-bold text-red-600 mb-4 text-lg">
+                放置するとどうなるか
+              </h5>
+              <p
+                id="result-risk"
+                class="text-sm text-slate-700 leading-7 text-justify"
+              >
+                リスク
+              </p>
+            </div>
+          </div>
 
-            <!-- Result Section -->
-            <section id="result-section" class="hidden fade-in">
-                
-                <!-- Result Header -->
-                <div class="border-b-4 border-navy-900 pb-8 mb-12">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="bg-navy-900 text-white px-3 py-1 font-bold text-sm tracking-widest">DIAGNOSIS RESULT</span>
-                        <span id="result-label" class="font-bold text-slate-500">タイプ名</span>
-                    </div>
-                    <h2 id="result-h1" class="text-3xl md:text-5xl font-black text-navy-900 leading-tight mb-6">
-                        見出し
-                    </h2>
-                    <p id="result-subcopy" class="text-lg md:text-xl font-bold text-slate-700 leading-relaxed border-l-4 border-signal-400 pl-6">
-                        サブコピー
-                    </p>
-                </div>
+          <!-- Card 3: Action (Full Width) -->
+          <div
+            class="bg-navy-900 text-white p-8 md:p-10 rounded-sm shadow-sm mb-6 relative overflow-hidden sharp-shadow"
+          >
+            <div class="absolute top-0 right-0 p-4 opacity-10">
+              <svg
+                width="100"
+                height="100"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.75 9.5 9.75 12 11zm0 2.5l-5-2.5-5 2.5 10 5 10-5-5-2.5-5 2.5z"
+                />
+              </svg>
+            </div>
 
-                <!-- 3 Cards Layout -->
-                <div class="grid md:grid-cols-3 gap-6 mb-16">
-                    
-                    <!-- Card 1: Why Now -->
-                    <div class="bg-slate-50 border-2 border-slate-200 p-6 relative">
-                        <h4 class="font-black text-slate-400 text-5xl absolute -top-5 -left-2 opacity-20">01</h4>
-                        <h4 class="font-bold text-navy-900 border-b-2 border-navy-900 pb-2 mb-4 inline-block">WHY NOW</h4>
-                        <p id="result-why-now" class="text-sm font-medium leading-relaxed">
-                            なぜ今やるべきか
-                        </p>
-                    </div>
+            <h4
+              class="font-mono font-bold text-signal-400 text-xs mb-6 tracking-widest border-b border-white/20 pb-2 inline-block"
+            >
+              03 PRESCRIPTION
+            </h4>
 
-                    <!-- Card 2: Risk -->
-                    <div class="bg-slate-50 border-2 border-slate-200 p-6 relative">
-                        <h4 class="font-black text-slate-400 text-5xl absolute -top-5 -left-2 opacity-20">02</h4>
-                        <h4 class="font-bold text-red-600 border-b-2 border-red-600 pb-2 mb-4 inline-block">RISK</h4>
-                        <p id="result-risk" class="text-sm font-medium leading-relaxed">
-                            リスク
-                        </p>
-                    </div>
+            <ul id="result-action-list" class="space-y-4">
+              <!-- List items -->
+            </ul>
+          </div>
 
-                    <!-- Card 3: Action -->
-                    <div class="bg-navy-900 text-white p-6 relative sharp-shadow">
-                        <h4 class="font-black text-white text-5xl absolute -top-5 -left-2 opacity-10">03</h4>
-                        <h4 class="font-bold text-signal-400 border-b-2 border-signal-400 pb-2 mb-4 inline-block">ACTION</h4>
-                        <ul id="result-action-list" class="space-y-3 text-sm font-bold">
-                            <!-- List items -->
-                        </ul>
-                    </div>
-                </div>
+          <!-- Supplement -->
+          <div
+            class="bg-slate-50 border border-slate-200 p-6 md:p-8 mb-12 rounded-sm text-sm"
+          >
+            <h4
+              class="font-bold text-slate-500 text-xs mb-4 flex items-center uppercase tracking-widest"
+            >
+              Professional Note
+            </h4>
+            <p
+              id="result-supplement"
+              class="text-slate-600 leading-7 font-medium"
+            >
+              補足テキスト
+            </p>
+          </div>
 
-                <!-- Supplement -->
-                <div class="bg-white border-2 border-navy-900 p-8 md:p-12 mb-16 max-w-3xl mx-auto">
-                    <h4 class="font-bold text-lg mb-6 flex items-center">
-                        <span class="w-8 h-8 bg-navy-900 text-white flex items-center justify-center font-serif mr-3">i</span>
-                        プロフェッショナル・ノート
-                    </h4>
-                    <p id="result-supplement" class="text-slate-700 leading-8 font-medium font-serif">
-                        補足テキスト
-                    </p>
-                </div>
+          <!-- CTA -->
+          <div class="sticky bottom-4 z-40 px-2 max-w-2xl mx-auto">
+            <button
+              id="cta-btn"
+              class="w-full bg-signal-400 hover:bg-yellow-300 text-navy-900 text-lg md:text-lg font-black py-5 px-6 border-2 border-navy-900 sharp-shadow shadow-xl transition-transform hover:-translate-y-1 block mx-auto text-center"
+              onclick="window.open('https://forms.gle/NHZDFyXefaPJnqSQ7', '_blank')"
+            >
+              無料レポートを受け取る
+            </button>
+          </div>
 
-                <!-- Use Case / CTA -->
-                <div class="text-center sticky bottom-6 z-40 px-4">
-                     <button id="cta-btn" class="w-full max-w-2xl bg-signal-400 hover:bg-yellow-300 text-navy-900 text-xl font-black py-6 px-10 border-4 border-navy-900 sharp-shadow shadow-xl transition-transform hover:-translate-y-1 block mx-auto">
-                         無料プランを受け取る
-                     </button>
-                     <p class="mt-4 text-xs font-bold text-slate-400 bg-white/90 inline-block px-2 py-1">※ セールスは一切ありません</p>
-                </div>
-
-                <div class="text-center mt-20 pb-20"> 
-                    <button onclick="location.reload()" class="text-slate-400 hover:text-navy-900 underline text-sm font-bold">
-                        DIAGNOSIS RESET
-                    </button>
-                </div>
-
-            </section>
-
-        </div>
+          <div class="text-center mt-16 pb-20">
+            <button
+              onclick="location.reload()"
+              class="text-slate-400 hover:text-navy-900 text-xs font-mono border-b border-transparent hover:border-navy-900 transition-colors"
+            >
+              RESET DIAGNOSIS
+            </button>
+          </div>
+        </section>
+      </div>
     </main>
-    
+
     <script src="./diagnosis_data.js"></script>
     <script src="./logic.js"></script>
   </body>
